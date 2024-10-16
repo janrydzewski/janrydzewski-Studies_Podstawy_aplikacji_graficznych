@@ -1,16 +1,13 @@
-# project1
+# Podstawy aplikacji graficznych
 
-A new Flutter project.
+Wykonałem wszystkie z 5 podpunktów, zdecydowałem się na wykorzystanie języku dart z frameworkiem flutter. Cały projekt zrealizowałem na strukturze MVVM, wykorzystując bloca jako viewmodels. Poniżej załączam checkliste z podpunktami zadania oraz screen z działającej aplikacji. Całość była testowana na aplikacji MacOS.
 
-## Getting Started
+W dowolnym języku programowania zaimplementować w aplikacji graficznej:
 
-This project is a starting point for a Flutter application.
+- [x] Tworzenie, przesuwanie i skalowanie trójkątów, czworokątów, elips (należy zaimplementować przesuwanie i skalowanie obecnie rysowanej figury, jak w Paint)
+- [x] Rysowanie prostych linii
+- [x] Rysowanie odręczne
+- [x] Zapisywanie powstałego obrazu
+- [x] Pisanie tekstu na canvas (funkcjonalność jak w Paint)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img width="908" alt="Zrzut ekranu 2024-10-16 o 21 30 32" src="https://github.com/user-attachments/assets/5300a11c-ecc1-4501-816d-ed901fb43b7a">
