@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-enum ShapeType { line, rectangle, ellipse, triangle, freeDraw, text}
+enum ShapeType { line, rectangle, ellipse, triangle, freeDraw, text }
 
 class Shape extends Equatable {
   final ShapeType type;
@@ -34,7 +34,8 @@ class Shape extends Equatable {
   }
 
   @override
-  List<Object?> get props => [type, startPosition, endPosition, points, color, text];
+  List<Object?> get props =>
+      [type, startPosition, endPosition, points, color, text];
 
   Shape copyWith({
     ShapeType? type,

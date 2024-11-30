@@ -16,4 +16,9 @@ class ShapeCubit extends Cubit<ShapeState> {
   void changeColor(Color color) {
     emit(state.copyWith(color: color));
   }
+
+  void updateColor(double r, double g, double b) {
+    final color = Color.fromRGBO(r.round(), g.round(), b.round(), 1);
+    emit(state.copyWith(color: color));
+  }
 }

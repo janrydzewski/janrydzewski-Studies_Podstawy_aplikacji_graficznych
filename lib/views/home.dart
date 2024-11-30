@@ -1,9 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -43,7 +42,11 @@ class _HomePageState extends State<_HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(() => saveImage()),
+      appBar: appBar((
+        val,
+      ) {
+        saveImage(context, val);
+      }, context),
       body: GestureDetector(
         onTapUp: (details) async {
           final shapeCubit = context.read<ShapeCubit>();
@@ -88,31 +91,205 @@ class _HomePageState extends State<_HomePage> {
         },
         child: BlocBuilder<BoardCubit, BoardState>(
           builder: (context, state) {
-            return RepaintBoundary(
-              key: globalKey,
-              child: CustomPaint(
-                painter: BoardPainter(state.shapes, state.currentShape),
-                child: Container(),
-              ),
+            return Stack(
+              children: [
+                RepaintBoundary(
+                  key: globalKey,
+                  child: CustomPaint(
+                    painter: BoardPainter(state.shapes, state.currentShape),
+                    child: Container(),
+                  ),
+                ),
+                Text(state.shapes.toString()),
+              ],
             );
           },
         ),
       ),
     );
   }
+}
 
-  Future<void> saveImage() async {
-    RenderRepaintBoundary boundary =
-        globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    ui.Image image = await boundary.toImage();
-    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    if (byteData != null) {
-      final directory = (await getApplicationDocumentsDirectory()).path;
-      File imgFile = File('$directory/screenshot.png');
-      await imgFile.writeAsBytes(byteData.buffer.asUint8List());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Image saved to $directory/screenshot.png')),
-      );
+Future<void> saveImage(BuildContext context, String type) async {
+  log("Save");
+  final shapes = context.read<BoardCubit>().state.shapes;
+
+  final filePath = await getFilePath('output.ppm');
+
+  await saveCanvasToPPM(filePath, type, 800, 600, shapes);
+}
+
+Future<String> getFilePath(String fileName) async {
+  final directory = await getApplicationDocumentsDirectory();
+  return '${directory.path}/$fileName';
+}
+
+Future<List<Color>> generatePixelData(
+  int width,
+  int height,
+  List<Shape> shapes,
+) async {
+  final recorder = PictureRecorder();
+  final canvas = Canvas(
+      recorder, Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()));
+  final painter = BoardPainter(shapes, null);
+
+  painter.paint(canvas, Size(width.toDouble(), height.toDouble()));
+
+  final image = await recorder.endRecording().toImage(width, height);
+  final byteData = await image.toByteData(format: ImageByteFormat.rawRgba);
+
+  final pixels = <Color>[];
+  for (int i = 0; i < byteData!.lengthInBytes; i += 4) {
+    final r = byteData.getUint8(i);
+    final g = byteData.getUint8(i + 1);
+    final b = byteData.getUint8(i + 2);
+    pixels.add(Color.fromARGB(255, r, g, b));
+  }
+
+  return pixels;
+}
+
+Future<void> saveAsP1File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final buffer = StringBuffer();
+
+  buffer.writeln('P1');
+  buffer.writeln('$width $height');
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      final index = y * width + x;
+      final color = pixels[index];
+      // Używamy prostego rozróżnienia na czarny (0) i biały (1)
+      final pixelValue =
+          (color.red + color.green + color.blue) ~/ 3 > 127 ? 1 : 0;
+      buffer.write('$pixelValue ');
     }
+    buffer.writeln();
+  }
+
+  final file = File(filePath);
+  await file.writeAsString(buffer.toString());
+}
+
+Future<void> saveAsP2File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final buffer = StringBuffer();
+
+  buffer.writeln('P2');
+  buffer.writeln('$width $height');
+  buffer.writeln('255');
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      final index = y * width + x;
+      final color = pixels[index];
+      // Zapisujemy wartość szarości jako średnią z R, G i B
+      final grayValue = (color.red + color.green + color.blue) ~/ 3;
+      buffer.write('$grayValue ');
+    }
+    buffer.writeln();
+  }
+
+  final file = File(filePath);
+  await file.writeAsString(buffer.toString());
+}
+
+Future<void> saveAsP3File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final buffer = StringBuffer();
+
+  buffer.writeln('P3');
+  buffer.writeln('$width $height');
+  buffer.writeln('255');
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      final index = y * width + x;
+      final color = pixels[index];
+      buffer.write('${color.red} ${color.green} ${color.blue} ');
+    }
+    buffer.writeln();
+  }
+
+  final file = File(filePath);
+  await file.writeAsString(buffer.toString());
+}
+
+Future<void> saveAsP4File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final header = 'P4\n$width $height\n';
+  final pixelData = <int>[];
+
+  for (final color in pixels) {
+    // Każdy piksel w formacie P4 zapisujemy jako bit (0 dla czarnego, 255 dla białego)
+    final pixelValue =
+        (color.red + color.green + color.blue) ~/ 3 > 127 ? 255 : 0;
+    pixelData.add(pixelValue);
+  }
+
+  final file = File(filePath);
+  await file.writeAsBytes([...header.codeUnits, ...pixelData]);
+}
+
+Future<void> saveAsP5File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final header = 'P5\n$width $height\n255\n';
+  final pixelData = <int>[];
+
+  for (final color in pixels) {
+    // Zapisujemy wartość szarości (0-255)
+    final grayValue = (color.red + color.green + color.blue) ~/ 3;
+    pixelData.add(grayValue);
+  }
+
+  final file = File(filePath);
+  await file.writeAsBytes([...header.codeUnits, ...pixelData]);
+}
+
+Future<void> saveAsP6File(
+    String filePath, int width, int height, List<Color> pixels) async {
+  final header = 'P6\n$width $height\n255\n';
+  final pixelData = <int>[];
+
+  for (final color in pixels) {
+    pixelData.addAll([color.red, color.green, color.blue]);
+  }
+
+  final file = File(filePath);
+  await file.writeAsBytes([...header.codeUnits, ...pixelData]);
+}
+
+Future<void> saveCanvasToPPM(
+  String filePath,
+  String format,
+  int width,
+  int height,
+  List<Shape> shapes,
+) async {
+  final pixels = await generatePixelData(width, height, shapes);
+
+  switch (format) {
+    case 'P3':
+      await saveAsP3File(filePath, width, height, pixels);
+      break;
+    case 'P6':
+      await saveAsP6File(filePath, width, height, pixels);
+      break;
+    case 'P1':
+      await saveAsP1File(filePath, width, height, pixels);
+      break;
+    case 'P2':
+      await saveAsP2File(filePath, width, height, pixels);
+      break;
+    case 'P4':
+      await saveAsP4File(filePath, width, height, pixels);
+      break;
+    case 'P5':
+      await saveAsP5File(filePath, width, height, pixels);
+      break;
+    default:
+      throw Exception('Nieobsługiwany format: $format');
   }
 }
