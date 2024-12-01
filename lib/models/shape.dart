@@ -2,7 +2,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-enum ShapeType { line, rectangle, ellipse, triangle, freeDraw, text }
+enum ShapeType { line, rectangle, ellipse, triangle, freeDraw, text, polygon }
 
 class Shape extends Equatable {
   final ShapeType type;

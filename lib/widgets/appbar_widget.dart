@@ -70,6 +70,8 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
                         _AppBarElement(
                             shapeType: ShapeType.freeDraw, shapeState: state),
                         _AppBarElement(
+                            shapeType: ShapeType.polygon, shapeState: state),
+                        _AppBarElement(
                             shapeType: ShapeType.text, shapeState: state),
                         ElevatedButton(
                           onPressed: () => Navigator.of(context).push(
@@ -159,6 +161,8 @@ class _AppBarElement extends StatelessWidget {
         return const Icon(Icons.linear_scale);
       case ShapeType.freeDraw:
         return const Icon(Icons.edit_outlined);
+      case ShapeType.polygon:
+        return const Icon(Icons.square_foot_rounded);
       case ShapeType.text:
         return const Icon(Icons.abc);
     }

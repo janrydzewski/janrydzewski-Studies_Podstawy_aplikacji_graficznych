@@ -130,6 +130,16 @@ class BoardPainter extends CustomPainter {
             }
           }
           break;
+        case ShapeType.polygon:
+          if (shape.points.isNotEmpty) {
+            for (int i = 0; i < shape.points.length - 1; i++) {
+              canvas.drawLine(shape.points[i], shape.points[i + 1], paint);
+            }
+            if (shape.type == ShapeType.polygon) {
+              canvas.drawLine(shape.points.last, shape.points.first, paint);
+            }
+          }
+          break;
         case ShapeType.text:
           final textPainter = TextPainter(
             text: TextSpan(

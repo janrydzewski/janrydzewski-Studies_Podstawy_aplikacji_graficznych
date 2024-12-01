@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
@@ -38,6 +39,8 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   final GlobalKey globalKey = GlobalKey();
+  int tapCount = 0;
+  Timer? doubleTapTimer;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +67,18 @@ class _HomePageState extends State<_HomePage> {
               );
               boardCubit.startDrawing(shape);
               boardCubit.endDrawing();
+            }
+          } else if (shapeCubit.state.shapeType == ShapeType.polygon) {
+            tapCount++;
+            if (tapCount == 2) {
+              doubleTapTimer?.cancel();
+              boardCubit.finalizePolygon();
+              tapCount = 0;
+            } else {
+              doubleTapTimer = Timer(const Duration(milliseconds: 300), () {
+                boardCubit.addPolygonPoint(details.localPosition);
+                tapCount = 0;
+              });
             }
           }
         },
@@ -100,7 +115,6 @@ class _HomePageState extends State<_HomePage> {
                     child: Container(),
                   ),
                 ),
-                Text(state.shapes.toString()),
               ],
             );
           },

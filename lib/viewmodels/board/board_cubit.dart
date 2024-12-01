@@ -329,32 +329,53 @@ class BoardCubit extends Cubit<BoardState> {
 
   void updateDrawing(Offset position) {
     if (state.currentShape != null) {
-      if (state.currentShape!.type == ShapeType.freeDraw) {
+      if (state.currentShape!.type == ShapeType.freeDraw ||
+          state.currentShape!.type == ShapeType.polygon) {
         final updatedPoints = List<Offset>.from(state.currentShape!.points)
           ..add(position);
         emit(state.copyWith(
           currentShape: state.currentShape!.copyWith(points: updatedPoints),
         ));
-        log("Zaktualizowano punkty dla freeDraw: ${updatedPoints.length} punktów");
       } else {
         emit(state.copyWith(
           currentShape: state.currentShape!.copyWith(endPosition: position),
         ));
-        log("Zaktualizowano pozycję końcową kształtu do: $position");
       }
     }
   }
 
-  void endDrawing() {
-    if (state.currentShape != null) {
+  void addPolygonPoint(Offset position) {
+    if (state.currentShape != null &&
+        state.currentShape!.type == ShapeType.polygon) {
+      final updatedPoints = List<Offset>.from(state.currentShape!.points)
+        ..add(position);
       emit(state.copyWith(
-        shapes: List<Shape>.from(state.shapes)..add(state.currentShape!),
-        drawingQueue: Queue.from(state.drawingQueue),
-        currentShape: null,
+        currentShape: state.currentShape!.copyWith(points: updatedPoints),
       ));
-      log("Zakończono rysowanie kształtu i dodano go do listy kształtów");
     }
   }
+
+  void finalizePolygon() {
+    if (state.currentShape != null &&
+        state.currentShape!.type == ShapeType.polygon) {
+      emit(state.copyWith(
+        shapes: List<Shape>.from(state.shapes)..add(state.currentShape!),
+        currentShape: null,
+      ));
+    }
+  }
+
+  void endDrawing() {
+    if (state.currentShape != null &&
+        state.currentShape!.type != ShapeType.polygon) {
+      emit(state.copyWith(
+        shapes: List<Shape>.from(state.shapes)..add(state.currentShape!),
+        currentShape: null,
+      ));
+    }
+  }
+
+  void clear() => emit(BoardState(drawingQueue: Queue(), shapes: []));
 
   void processNextShape() {
     if (state.drawingQueue.isNotEmpty) {
@@ -368,6 +389,4 @@ class BoardCubit extends Cubit<BoardState> {
       log("Brak zadań w kolejce do wykonania");
     }
   }
-
-  void clear() => emit(BoardState(drawingQueue: Queue(), shapes: []));
 }
