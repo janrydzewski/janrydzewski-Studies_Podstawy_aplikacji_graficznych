@@ -12,7 +12,9 @@ import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/viewmodels/shape/shape_cubit.dart';
 import 'package:project1/views/painter.dart';
 import 'package:project1/widgets/appbar_widget.dart';
+import 'package:project1/widgets/colors_picker_widget.dart';
 import 'package:project1/widgets/dialog.dart';
+import 'package:project1/widgets/shape_picker_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -106,13 +108,43 @@ class _HomePageState extends State<_HomePage> {
         },
         child: BlocBuilder<BoardCubit, BoardState>(
           builder: (context, state) {
-            return Stack(
+            return Row(
               children: [
-                RepaintBoundary(
-                  key: globalKey,
-                  child: CustomPaint(
-                    painter: BoardPainter(state.shapes, state.currentShape),
-                    child: Container(),
+                // Container(
+                //   decoration: BoxDecoration(
+                //       border: Border.all(color: Colors.black),
+                //       gradient: const LinearGradient(
+                //           colors: [Colors.grey, Colors.white])),
+                //   width: 200,
+                //   height: double.infinity,
+                //   child: const ShapePickerWidget(),
+                // ),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      RepaintBoundary(
+                        key: globalKey,
+                        child: CustomPaint(
+                          painter:
+                              BoardPainter(state.shapes, state.currentShape),
+                          child: Container(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      gradient: const LinearGradient(
+                          colors: [Colors.grey, Colors.white])),
+                  width: 200,
+                  height: double.infinity,
+                  child: Column(
+                    children: [
+                      const ColorsPickerWidget(),
+                      const ShapePickerWidget()
+                    ],
                   ),
                 ),
               ],

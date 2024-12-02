@@ -93,7 +93,7 @@ class _CubixDState extends State<CustomCube>
             child: Transform(
               transform: Matrix4.identity()
                 ..translate(_width * 0.09, _height * 0.09, 0)
-                ..setEntry(3, 2, 0.001)
+                ..setEntry(1, 3, 0.001)
                 ..rotateX(widget.delta.x)
                 ..rotateY(widget.delta.y),
               alignment: FractionalOffset.center,
