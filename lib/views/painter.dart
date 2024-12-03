@@ -24,8 +24,9 @@ class BoardPainter extends CustomPainter {
 
   void _drawShape(Canvas canvas, Shape shape) {
     if (shape is ImageShape) {
-      final double originalWidth = shape.endPosition.dx;
-      final double originalHeight = shape.endPosition.dy;
+      // _drawImage(canvas, shape);
+      final double originalWidth = shape.image.width.toDouble();
+      final double originalHeight = shape.image.height.toDouble();
 
       const double maxWidth = 300;
       const double maxHeight = 300;
@@ -33,54 +34,66 @@ class BoardPainter extends CustomPainter {
       double scaleX = maxWidth / originalWidth;
       double scaleY = maxHeight / originalHeight;
 
-      double scale = 1.0;
-      if (scaleX < scaleY) {
-        scale = scaleX;
-      } else {
-        scale = scaleY;
-      }
+      double scale = scaleX < scaleY ? scaleX : scaleY;
 
-      const int pixelSize = 1;
+      final offset = Offset(
+        shape.startPosition.dx,
+        shape.startPosition.dy,
+      );
 
-      if (SelectedFilter.filter < 7) {
-        final newPixels = getFilterA(shape.pixels);
-        for (var pixel in newPixels) {
-          final paint = Paint()..color = pixel.color;
+      final rect = Rect.fromLTWH(
+        offset.dx,
+        offset.dy,
+        originalWidth * scale,
+        originalHeight * scale,
+      );
 
-          final scaledPosition = Offset(
-            pixel.position.dx * scale,
-            pixel.position.dy * scale,
-          );
+      canvas.drawImageRect(
+        shape.image,
+        Rect.fromLTWH(0, 0, originalWidth, originalHeight),
+        rect,
+        Paint(),
+      );
 
-          final rect = Rect.fromLTWH(
-            scaledPosition.dx,
-            scaledPosition.dy,
-            pixelSize.toDouble() * scale,
-            pixelSize.toDouble() * scale,
-          );
-          canvas.drawRect(rect, paint);
-        }
-      } else {
-        final newShape = getFilterB(shape);
-        for (var pixel in newShape.pixels) {
-          final paint = Paint()..color = pixel.color;
+      // if (SelectedFilter.filter < 7) {
+      //   final newPixels = getFilterA(shape.pixels);
+      //   for (var pixel in newPixels) {
+      //     final paint = Paint()..color = pixel.color;
 
-          final scaledPosition = Offset(
-            pixel.position.dx * scale,
-            pixel.position.dy * scale,
-          );
+      //     final scaledPosition = Offset(
+      //       pixel.position.dx * scale,
+      //       pixel.position.dy * scale,
+      //     );
 
-          final rect = Rect.fromLTWH(
-            scaledPosition.dx,
-            scaledPosition.dy,
-            pixelSize.toDouble() * scale,
-            pixelSize.toDouble() * scale,
-          );
-          canvas.drawRect(rect, paint);
-        }
-      }
+      //     final rect = Rect.fromLTWH(
+      //       scaledPosition.dx,
+      //       scaledPosition.dy,
+      //       pixelSize.toDouble() * scale,
+      //       pixelSize.toDouble() * scale,
+      //     );
+      //     canvas.drawRect(rect, paint);
+      //   }
+      // } else {
+      //   final newShape = getFilterB(shape);
+      //   for (var pixel in newShape.pixels) {
+      //     final paint = Paint()..color = pixel.color;
 
-      // for (var pixel in newPixels) {
+      //     final scaledPosition = Offset(
+      //       pixel.position.dx * scale,
+      //       pixel.position.dy * scale,
+      //     );
+
+      //     final rect = Rect.fromLTWH(
+      //       scaledPosition.dx,
+      //       scaledPosition.dy,
+      //       pixelSize.toDouble() * scale,
+      //       pixelSize.toDouble() * scale,
+      //     );
+      //     canvas.drawRect(rect, paint);
+      //   }
+      // }
+
+      // for (var pixel in shape.pixels) {
       //   final paint = Paint()..color = pixel.color;
 
       //   final scaledPosition = Offset(
@@ -159,4 +172,15 @@ class BoardPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
   }
+}
+
+void _drawImage(Canvas canvas, ImageShape imageShape) {
+  final src = Rect.fromLTWH(0, 0, imageShape.image.width.toDouble(),
+      imageShape.image.height.toDouble());
+  final dst = Rect.fromLTWH(
+      imageShape.startPosition.dx,
+      imageShape.startPosition.dy,
+      imageShape.endPosition.dx,
+      imageShape.endPosition.dy);
+  canvas.drawImageRect(imageShape.image, src, dst, Paint());
 }

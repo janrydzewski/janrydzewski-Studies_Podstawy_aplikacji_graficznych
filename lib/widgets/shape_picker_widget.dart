@@ -35,7 +35,7 @@ class ShapePickerWidget extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       final filterResult = await showFilterDialog(context);
-                      SelectedFilter.filter = filterResult ?? 0;
+                      // SelectedFilter.filter = filterResult ?? 0;
                       if (filterResult != null) {
                         final result = await FilePicker.platform.pickFiles(
                           type: FileType.custom,

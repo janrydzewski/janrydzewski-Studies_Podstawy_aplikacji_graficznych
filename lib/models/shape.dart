@@ -33,6 +33,8 @@ class Shape extends Equatable {
     endPosition = newEndPosition;
   }
 
+  void draw(Canvas canvas) {}
+
   @override
   List<Object?> get props =>
       [type, startPosition, endPosition, points, color, text];
