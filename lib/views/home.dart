@@ -110,15 +110,6 @@ class _HomePageState extends State<_HomePage> {
           builder: (context, state) {
             return Row(
               children: [
-                // Container(
-                //   decoration: BoxDecoration(
-                //       border: Border.all(color: Colors.black),
-                //       gradient: const LinearGradient(
-                //           colors: [Colors.grey, Colors.white])),
-                //   width: 200,
-                //   height: double.infinity,
-                //   child: const ShapePickerWidget(),
-                // ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -140,11 +131,8 @@ class _HomePageState extends State<_HomePage> {
                           colors: [Colors.grey, Colors.white])),
                   width: 200,
                   height: double.infinity,
-                  child: Column(
-                    children: [
-                      const ColorsPickerWidget(),
-                      const ShapePickerWidget()
-                    ],
+                  child: const Column(
+                    children: [ColorsPickerWidget(), ShapePickerWidget()],
                   ),
                 ),
               ],

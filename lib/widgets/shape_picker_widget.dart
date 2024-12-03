@@ -53,7 +53,7 @@ class ShapePickerWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 100,
+              height: 50,
             ),
             const CubeWidget(),
           ],
