@@ -1,7 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/models/shape.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/viewmodels/shape/shape_cubit.dart';
@@ -35,7 +34,6 @@ class ShapePickerWidget extends StatelessWidget {
                 IconButton(
                     onPressed: () async {
                       final filterResult = await showFilterDialog(context);
-                      // SelectedFilter.filter = filterResult ?? 0;
                       if (filterResult != null) {
                         final result = await FilePicker.platform.pickFiles(
                           type: FileType.custom,

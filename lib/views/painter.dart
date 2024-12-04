@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/models/image_shape.dart';
 import 'package:project1/models/shape.dart';
 
@@ -22,9 +21,8 @@ class BoardPainter extends CustomPainter {
     canvas.restore();
   }
 
-  void _drawShape(Canvas canvas, Shape shape) {
+  void _drawShape(Canvas canvas, Shape shape) async {
     if (shape is ImageShape) {
-      // _drawImage(canvas, shape);
       final double originalWidth = shape.image.width.toDouble();
       final double originalHeight = shape.image.height.toDouble();
 
@@ -54,61 +52,6 @@ class BoardPainter extends CustomPainter {
         rect,
         Paint(),
       );
-
-      // if (SelectedFilter.filter < 7) {
-      //   final newPixels = getFilterA(shape.pixels);
-      //   for (var pixel in newPixels) {
-      //     final paint = Paint()..color = pixel.color;
-
-      //     final scaledPosition = Offset(
-      //       pixel.position.dx * scale,
-      //       pixel.position.dy * scale,
-      //     );
-
-      //     final rect = Rect.fromLTWH(
-      //       scaledPosition.dx,
-      //       scaledPosition.dy,
-      //       pixelSize.toDouble() * scale,
-      //       pixelSize.toDouble() * scale,
-      //     );
-      //     canvas.drawRect(rect, paint);
-      //   }
-      // } else {
-      //   final newShape = getFilterB(shape);
-      //   for (var pixel in newShape.pixels) {
-      //     final paint = Paint()..color = pixel.color;
-
-      //     final scaledPosition = Offset(
-      //       pixel.position.dx * scale,
-      //       pixel.position.dy * scale,
-      //     );
-
-      //     final rect = Rect.fromLTWH(
-      //       scaledPosition.dx,
-      //       scaledPosition.dy,
-      //       pixelSize.toDouble() * scale,
-      //       pixelSize.toDouble() * scale,
-      //     );
-      //     canvas.drawRect(rect, paint);
-      //   }
-      // }
-
-      // for (var pixel in shape.pixels) {
-      //   final paint = Paint()..color = pixel.color;
-
-      //   final scaledPosition = Offset(
-      //     pixel.position.dx * scale,
-      //     pixel.position.dy * scale,
-      //   );
-
-      //   final rect = Rect.fromLTWH(
-      //     scaledPosition.dx,
-      //     scaledPosition.dy,
-      //     pixelSize.toDouble() * scale,
-      //     pixelSize.toDouble() * scale,
-      //   );
-      //   canvas.drawRect(rect, paint);
-      // }
     } else {
       final paint = Paint()
         ..color = shape.color
