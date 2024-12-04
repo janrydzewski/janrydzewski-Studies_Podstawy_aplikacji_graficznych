@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:project1/models/bezier_shape.dart';
 import 'package:project1/models/image_shape.dart';
 import 'package:project1/models/shape.dart';
 
@@ -52,6 +55,29 @@ class BoardPainter extends CustomPainter {
         rect,
         Paint(),
       );
+    } else if (shape is BezierShape) {
+      final paint = Paint()
+        ..color = shape.color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0;
+
+      final points = [
+        shape.startPosition,
+        ...shape.controlPoints,
+        shape.endPosition
+      ];
+
+      final path = Path();
+      path.moveTo(shape.startPosition.dx, shape.startPosition.dy);
+      for (int i = 0; i < points.length - 1; i += 2) {
+        path.quadraticBezierTo(
+          points[i].dx,
+          points[i].dy,
+          points[i + 1].dx,
+        );
+      }
+
+      canvas.drawPath(path, paint);
     } else {
       final paint = Paint()
         ..color = shape.color
@@ -59,6 +85,8 @@ class BoardPainter extends CustomPainter {
         ..strokeWidth = 2.0;
 
       switch (shape.type) {
+        case ShapeType.bezier:
+          break;
         case ShapeType.rectangle:
           final rect = Rect.fromPoints(shape.startPosition, shape.endPosition);
           canvas.drawRect(rect, paint);

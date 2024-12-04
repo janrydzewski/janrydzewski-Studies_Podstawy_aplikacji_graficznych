@@ -30,6 +30,7 @@ class ShapePickerWidget extends StatelessWidget {
                 _ShapeElement(shapeType: ShapeType.line, shapeState: state),
                 _ShapeElement(shapeType: ShapeType.freeDraw, shapeState: state),
                 _ShapeElement(shapeType: ShapeType.polygon, shapeState: state),
+                _ShapeElement(shapeType: ShapeType.bezier, shapeState: state),
                 _ShapeElement(shapeType: ShapeType.text, shapeState: state),
                 IconButton(
                     onPressed: () async {
@@ -69,6 +70,8 @@ class _ShapeElement extends StatelessWidget {
 
   Icon get icon {
     switch (shapeType) {
+      case ShapeType.bezier:
+        return const Icon(Icons.linear_scale);
       case ShapeType.ellipse:
         return const Icon(Icons.circle_outlined);
       case ShapeType.rectangle:

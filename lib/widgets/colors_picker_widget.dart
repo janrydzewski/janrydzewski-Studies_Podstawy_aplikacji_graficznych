@@ -16,8 +16,8 @@ class ColorsPickerWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              width: 200,
-              height: 200,
+              width: 250,
+              height: 150,
               color: state.color,
             ),
             Wrap(

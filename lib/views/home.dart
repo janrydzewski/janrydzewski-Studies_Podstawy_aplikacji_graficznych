@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project1/models/bezier_shape.dart';
 
 import 'package:project1/models/shape.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
@@ -43,6 +44,7 @@ class _HomePageState extends State<_HomePage> {
   final GlobalKey globalKey = GlobalKey();
   int tapCount = 0;
   Timer? doubleTapTimer;
+  List<Offset> bezierPoints = [];
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +83,25 @@ class _HomePageState extends State<_HomePage> {
                 boardCubit.addPolygonPoint(details.localPosition);
                 tapCount = 0;
               });
+            }
+          } else if (shapeCubit.state.shapeType == ShapeType.bezier) {
+            bezierPoints.add(details.localPosition);
+
+            if (bezierPoints.length == 3) {
+              final bezierShape = BezierShape(
+                type: ShapeType.bezier,
+                startPosition: bezierPoints[0],
+                endPosition: bezierPoints[2],
+                controlPoints: [
+                  bezierPoints[0],
+                  bezierPoints[1],
+                  bezierPoints[2]
+                ],
+                color: shapeCubit.state.color,
+              );
+              boardCubit.startDrawing(bezierShape);
+              bezierPoints.clear();
+              boardCubit.endDrawing();
             }
           }
         },
@@ -129,7 +150,7 @@ class _HomePageState extends State<_HomePage> {
                       border: Border.all(color: Colors.black),
                       gradient: const LinearGradient(
                           colors: [Colors.grey, Colors.white])),
-                  width: 200,
+                  width: 250,
                   height: double.infinity,
                   child: const Column(
                     children: [ColorsPickerWidget(), ShapePickerWidget()],
