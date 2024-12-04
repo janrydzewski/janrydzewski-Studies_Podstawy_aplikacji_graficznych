@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:project1/models/bezier_shape.dart';
 import 'package:project1/models/image_shape.dart';
@@ -69,12 +67,15 @@ class BoardPainter extends CustomPainter {
 
       final path = Path();
       path.moveTo(shape.startPosition.dx, shape.startPosition.dy);
-      for (int i = 0; i < points.length - 1; i += 2) {
+
+      for (int i = 1; i < points.length - 2; i++) {
+        path.cubicTo(points[i].dx, points[i].dy, points[i + 1].dx,
+            points[i + 1].dy, points[i + 2].dx, points[i + 2].dy);
+      }
+
+      if (points.length == 4) {
         path.quadraticBezierTo(
-          points[i].dx,
-          points[i].dy,
-          points[i + 1].dx,
-        );
+            points[1].dx, points[1].dy, points[2].dx, points[2].dy);
       }
 
       canvas.drawPath(path, paint);

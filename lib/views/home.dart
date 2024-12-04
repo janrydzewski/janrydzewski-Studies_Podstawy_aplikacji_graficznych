@@ -45,6 +45,7 @@ class _HomePageState extends State<_HomePage> {
   int tapCount = 0;
   Timer? doubleTapTimer;
   List<Offset> bezierPoints = [];
+  int? bezierPointsCount;
 
   @override
   Widget build(BuildContext context) {
@@ -85,23 +86,31 @@ class _HomePageState extends State<_HomePage> {
               });
             }
           } else if (shapeCubit.state.shapeType == ShapeType.bezier) {
-            bezierPoints.add(details.localPosition);
+            bezierPointsCount ??= await showBezierPoints(context);
+            if (bezierPointsCount != null) {
+              if (bezierPoints.length >= bezierPointsCount!) {
+                bezierPoints.clear();
+              }
 
-            if (bezierPoints.length == 3) {
-              final bezierShape = BezierShape(
-                type: ShapeType.bezier,
-                startPosition: bezierPoints[0],
-                endPosition: bezierPoints[2],
-                controlPoints: [
-                  bezierPoints[0],
-                  bezierPoints[1],
-                  bezierPoints[2]
-                ],
-                color: shapeCubit.state.color,
-              );
-              boardCubit.startDrawing(bezierShape);
-              bezierPoints.clear();
-              boardCubit.endDrawing();
+              bezierPoints.add(details.localPosition);
+
+              if (bezierPoints.length == bezierPointsCount) {
+                final bezierShape = BezierShape(
+                  type: ShapeType.bezier,
+                  startPosition: bezierPoints[0],
+                  endPosition: bezierPoints[bezierPointsCount! - 1],
+                  controlPoints: List.generate(bezierPointsCount! - 2,
+                      (index) => bezierPoints[index + 2]),
+                  color: shapeCubit.state.color,
+                );
+
+                boardCubit.startDrawing(bezierShape);
+
+                log(bezierPoints.toString());
+                bezierPoints.clear();
+                boardCubit.endDrawing();
+                bezierPointsCount = null;
+              }
             }
           }
         },

@@ -31,3 +31,28 @@ Future<String?> showTextInputDialog(BuildContext context) async {
     },
   );
 }
+
+Future<int?> showBezierPoints(BuildContext context) async {
+  int inputText = 2;
+  return await showDialog<int>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Enter bezier points'),
+        content: TextField(
+          onChanged: (value) {
+            inputText = int.parse(value);
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(inputText);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
