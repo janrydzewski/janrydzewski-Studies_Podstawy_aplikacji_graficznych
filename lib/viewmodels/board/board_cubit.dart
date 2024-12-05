@@ -393,4 +393,16 @@ class BoardCubit extends Cubit<BoardState> {
       log("Brak zadań w kolejce do wykonania");
     }
   }
+
+  void addShape(Shape shape) {
+    emit(state.copyWith(
+      shapes: List.from(state.shapes)..add(shape),
+    ));
+  }
+
+  void removeShape(Shape shape) {
+    emit(state.copyWith(
+      shapes: List.from(state.shapes)..remove(shape),
+    ));
+  }
 }

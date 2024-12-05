@@ -46,6 +46,7 @@ class _HomePageState extends State<_HomePage> {
   Timer? doubleTapTimer;
   List<Offset> bezierPoints = [];
   int? bezierPointsCount;
+  Shape? selectedShape;
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +107,44 @@ class _HomePageState extends State<_HomePage> {
 
                 boardCubit.startDrawing(bezierShape);
 
-                log(bezierPoints.toString());
                 bezierPoints.clear();
                 boardCubit.endDrawing();
                 bezierPointsCount = null;
+              }
+            }
+          } else if (shapeCubit.state.shapeType == ShapeType.pointer) {
+            const double tolerance = 10.0;
+            for (var shape in boardCubit.state.shapes.reversed) {
+              if (isPointNearShape(details.localPosition, shape, tolerance)) {
+                selectedShape = shape;
+                int? option = await showMenuDialog(context);
+                if (option != null) {
+                  if (option == 0) {
+                    Offset? newOffset = await showMoveDialog(context);
+                    if (newOffset != null) {
+                      selectedShape!.move(newOffset);
+                      boardCubit.removeShape(shape);
+                      boardCubit.addShape(selectedShape!);
+                    }
+                  }
+                  if (option == 1) {
+                    Offset? newOffset = await showScaleDialog(context);
+                    if (newOffset != null) {
+                      selectedShape!.resize(newOffset);
+                      boardCubit.removeShape(shape);
+                      boardCubit.addShape(selectedShape!);
+                    }
+                  }
+                  if (option == 2) {
+                    double? angle = await showRotateDialog(context);
+                    if (angle != null) {
+                      selectedShape!.rotate(angle);
+                      boardCubit.removeShape(shape);
+                      boardCubit.addShape(selectedShape!);
+                    }
+                  }
+                }
+                selectedShape = null;
               }
             }
           }
@@ -356,4 +391,18 @@ Future<void> saveCanvasToPPM(
     default:
       throw Exception('Nieobsługiwany format: $format');
   }
+}
+
+bool isPointNearShape(Offset point, Shape shape, double tolerance) {
+  final shapeRect = Rect.fromPoints(shape.startPosition, shape.endPosition);
+
+  if (shapeRect.inflate(tolerance).contains(point)) {
+    return true;
+  }
+
+  if (shape.points.isNotEmpty) {
+    return shape.points.any((p) => (p - point).distance <= tolerance);
+  }
+
+  return false;
 }

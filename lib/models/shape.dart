@@ -13,6 +13,7 @@ enum ShapeType {
   text,
   polygon,
   bezier,
+  pointer,
 }
 
 class Shape extends Equatable {
@@ -31,8 +32,7 @@ class Shape extends Equatable {
       this.color = Colors.black,
       this.text = ''});
 
-  void move(Offset newPosition) {
-    Offset offset = newPosition - startPosition;
+  void move(Offset offset) {
     startPosition += offset;
     endPosition += offset;
     if (points.isNotEmpty) {

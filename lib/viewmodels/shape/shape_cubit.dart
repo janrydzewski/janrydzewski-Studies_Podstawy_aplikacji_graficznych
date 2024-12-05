@@ -21,4 +21,36 @@ class ShapeCubit extends Cubit<ShapeState> {
     final color = Color.fromRGBO(r.round(), g.round(), b.round(), 1);
     emit(state.copyWith(color: color));
   }
+
+  void selectShape(Shape shape) {
+    emit(state.copyWith(selectedShape: shape));
+  }
+
+  void startMoving() {
+    emit(state.copyWith(isMoving: true));
+  }
+
+  void endMoving() {
+    emit(state.copyWith(isMoving: false));
+  }
+
+  void startResizing() {
+    emit(state.copyWith(isResizing: true));
+  }
+
+  void endResizing() {
+    emit(state.copyWith(isResizing: false));
+  }
+
+  void startRotating() {
+    emit(state.copyWith(isRotating: true));
+  }
+
+  void endRotating() {
+    emit(state.copyWith(isRotating: false));
+  }
+
+  void endManipulation() {
+    emit(state.copyWith(isMoving: false, isResizing: false, isRotating: false));
+  }
 }

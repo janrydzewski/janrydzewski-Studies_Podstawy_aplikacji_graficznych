@@ -88,6 +88,8 @@ class BoardPainter extends CustomPainter {
       switch (shape.type) {
         case ShapeType.bezier:
           break;
+        case ShapeType.pointer:
+          break;
         case ShapeType.rectangle:
           final rect = Rect.fromPoints(shape.startPosition, shape.endPosition);
           canvas.drawRect(rect, paint);

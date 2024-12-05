@@ -23,6 +23,7 @@ class ShapePickerWidget extends StatelessWidget {
             Wrap(
               alignment: WrapAlignment.center,
               children: [
+                _ShapeElement(shapeType: ShapeType.pointer, shapeState: state),
                 _ShapeElement(shapeType: ShapeType.ellipse, shapeState: state),
                 _ShapeElement(
                     shapeType: ShapeType.rectangle, shapeState: state),
@@ -70,8 +71,10 @@ class _ShapeElement extends StatelessWidget {
 
   Icon get icon {
     switch (shapeType) {
+      case ShapeType.pointer:
+        return const Icon(Icons.touch_app);
       case ShapeType.bezier:
-        return const Icon(Icons.linear_scale);
+        return const Icon(Icons.show_chart_outlined);
       case ShapeType.ellipse:
         return const Icon(Icons.circle_outlined);
       case ShapeType.rectangle:
