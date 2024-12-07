@@ -357,6 +357,7 @@ Future<void> saveAsP6File(
   }
 
   final file = File(filePath);
+  log("FILE: ${file.path}");
   await file.writeAsBytes([...header.codeUnits, ...pixelData]);
 }
 

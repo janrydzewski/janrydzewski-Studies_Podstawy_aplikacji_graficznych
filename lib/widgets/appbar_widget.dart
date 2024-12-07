@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/views/home.dart';
 
@@ -13,6 +14,16 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
           ),
         ),
       ),
+      centerTitle: true,
+      title: ValueListenableBuilder<String>(
+        valueListenable: SelectedFilter.percentage,
+        builder: (context, value, child) {
+          return Text(
+            value != "" ? "Color percentage: $value" : "",
+            style: const TextStyle(fontSize: 24),
+          );
+        },
+      ),
       actions: [
         Theme(
           data: ThemeData(
@@ -21,7 +32,10 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
             hoverColor: Colors.transparent,
           ),
           child: InkWell(
-            onTap: () => context.read<BoardCubit>().clear(),
+            onTap: () {
+              context.read<BoardCubit>().clear();
+              SelectedFilter.percentage.value = "";
+            },
             child: const Row(
               children: [
                 Icon(Icons.close),

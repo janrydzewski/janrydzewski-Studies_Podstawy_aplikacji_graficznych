@@ -18,11 +18,11 @@ part 'board_state.dart';
 class BoardCubit extends Cubit<BoardState> {
   BoardCubit() : super(BoardState(drawingQueue: Queue()));
 
-  Future<void> loadImageFile(String filePath, int selectedFilter) async {
+  Future<void> loadImageFile(String filePath, int selectedFilter, Color color) async {
     log("Rozpoczęcie ładowania pliku obrazu: $filePath");
     final shape = await _parseImageFile(filePath);
     final generatedShape =
-        await applySelectedFilterAndGenerateImageShape(shape!, selectedFilter);
+        await applySelectedFilterAndGenerateImageShape(shape!, selectedFilter, color);
     if (generatedShape != null) {
       emit(state.copyWith(
         drawingQueue: Queue.from(state.drawingQueue)..add(generatedShape),
@@ -35,13 +35,13 @@ class BoardCubit extends Cubit<BoardState> {
   }
 
   Future<ImageShape?> applySelectedFilterAndGenerateImageShape(
-      ImageShape shape, int selectedFilter) async {
+      ImageShape shape, int selectedFilter, Color color) async {
     List<Pixel> newPixels;
 
     if (selectedFilter < 7) {
       newPixels = getFilterA(shape.pixels, selectedFilter);
     } else {
-      newPixels = getFilterB(shape, selectedFilter).pixels;
+      newPixels = getFilterB(shape, selectedFilter, color).pixels;
     }
 
     final image = await pixelsToImage(

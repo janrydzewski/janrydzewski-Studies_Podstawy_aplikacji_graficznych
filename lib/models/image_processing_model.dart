@@ -7,6 +7,7 @@ import 'package:project1/models/shape.dart';
 
 class SelectedFilter {
   static int filter = 0;
+  static ValueNotifier<String> percentage = ValueNotifier<String>("");
 }
 
 getFilterA(List<Pixel> pixels, int filter) {
@@ -28,7 +29,7 @@ getFilterA(List<Pixel> pixels, int filter) {
   }
 }
 
-ImageShape getFilterB(ImageShape imageShape, int filter) {
+ImageShape getFilterB(ImageShape imageShape, int filter, Color color) {
   switch (filter) {
     case 7:
       return ImageProcessor.applyMeanFilter(imageShape);
@@ -81,6 +82,8 @@ ImageShape getFilterB(ImageShape imageShape, int filter) {
       return ImageProcessor.niblackThreshold(imageShape, -0.2);
     case 26:
       return ImageProcessor.sauvolaThreshold(imageShape, -0.2);
+    case 27:
+      return ImageProcessor.detectAndHighlightColor(imageShape, color, 60);
     default:
       return imageShape;
   }
@@ -804,6 +807,42 @@ class ImageProcessor {
       text: imageShape.text,
       pixels: newPixels,
     );
+  }
+
+  static ImageShape detectAndHighlightColor(
+      ImageShape imageShape, Color targetColor, int tolerance) {
+    final newPixels = List<Pixel>.from(imageShape.pixels);
+    int matchingPixelsCount = 0;
+
+    for (int i = 0; i < imageShape.pixels.length; i++) {
+      final pixel = imageShape.pixels[i];
+
+      if (_isColorWithinTolerance(pixel.color, targetColor, tolerance)) {
+        matchingPixelsCount++;
+        newPixels[i] = Pixel(pixel.position, Colors.red);
+      }
+    }
+
+    final double percentage =
+        (matchingPixelsCount / imageShape.pixels.length) * 100;
+    SelectedFilter.percentage.value = percentage.toStringAsFixed(2);
+
+    return ImageShape(
+      type: imageShape.type,
+      startPosition: imageShape.startPosition,
+      endPosition: imageShape.endPosition,
+      points: imageShape.points,
+      color: imageShape.color,
+      text: imageShape.text,
+      pixels: newPixels,
+    );
+  }
+
+  static bool _isColorWithinTolerance(
+      Color color, Color targetColor, int tolerance) {
+    return (color.red - targetColor.red).abs() <= tolerance &&
+        (color.green - targetColor.green).abs() <= tolerance &&
+        (color.blue - targetColor.blue).abs() <= tolerance;
   }
 
   static double _calculateMean(List<Pixel> window) {

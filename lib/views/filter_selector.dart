@@ -20,7 +20,7 @@ Future<int?> showFilterDialog(BuildContext context) async {
                     runSpacing: 5,
                     spacing: 5,
                     children: List.generate(
-                        27,
+                        28,
                         (index) => Padding(
                             padding: const EdgeInsets.all(10),
                             child: filterElement(index, context))),
@@ -61,6 +61,7 @@ Widget filterElement(int id, BuildContext context) {
       24 => "Otsu",
       25 => "Niblack",
       26 => "Sauvola",
+      27 => "Wykrywanie koloru",
       _ => "Unknown"
     };
   }
