@@ -45,7 +45,8 @@ class ShapePickerWidget extends StatelessWidget {
                         if (result != null &&
                             result.files.single.path != null) {
                           final cubit = context.read<BoardCubit>();
-                          cubit.loadImageFile(result.files.single.path!);
+                          cubit.loadImageFile(
+                              result.files.single.path!, filterResult);
                         }
                       }
                     },

@@ -9,8 +9,8 @@ class SelectedFilter {
   static int filter = 0;
 }
 
-getFilterA(List<Pixel> pixels) {
-  switch (SelectedFilter.filter) {
+getFilterA(List<Pixel> pixels, int filter) {
+  switch (filter) {
     case 0:
       return pixels;
     case 1:
@@ -28,8 +28,8 @@ getFilterA(List<Pixel> pixels) {
   }
 }
 
-ImageShapeV2 getFilterB(ImageShapeV2 imageShape) {
-  switch (SelectedFilter.filter) {
+ImageShape getFilterB(ImageShape imageShape, int filter) {
+  switch (filter) {
     case 7:
       return ImageProcessor.applyMeanFilter(imageShape);
     case 8:
@@ -184,8 +184,8 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 applyConvolution(
-      ImageShapeV2 shape, List<List<double>> mask) {
+  static ImageShape applyConvolution(
+      ImageShape shape, List<List<double>> mask) {
     final int maskSize = mask.length;
     final int offset = maskSize ~/ 2;
 
@@ -229,7 +229,7 @@ class ImageProcessor {
       }
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: ShapeType.freeDraw,
       startPosition: Offset.zero,
       endPosition: Offset(width.toDouble(), height.toDouble()),
@@ -237,7 +237,7 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 applyMeanFilter(ImageShapeV2 shape) {
+  static ImageShape applyMeanFilter(ImageShape shape) {
     final mask = [
       [1 / 9, 1 / 9, 1 / 9],
       [1 / 9, 1 / 9, 1 / 9],
@@ -246,7 +246,7 @@ class ImageProcessor {
     return applyConvolution(shape, mask);
   }
 
-  static ImageShapeV2 applyMedianFilter(ImageShapeV2 shape, int size) {
+  static ImageShape applyMedianFilter(ImageShape shape, int size) {
     final offset = size ~/ 2;
     final pixels = shape.pixels;
     final width = shape.endPosition.dx.toInt();
@@ -322,7 +322,7 @@ class ImageProcessor {
       }
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: ShapeType.freeDraw,
       startPosition: Offset.zero,
       endPosition: Offset(width.toDouble(), height.toDouble()),
@@ -330,7 +330,7 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 applySobelFilter(ImageShapeV2 shape) {
+  static ImageShape applySobelFilter(ImageShape shape) {
     final gx = [
       [-1.0, 0.0, 1.0],
       [-2.0, 0.0, 2.0],
@@ -346,7 +346,7 @@ class ImageProcessor {
     return applyConvolution(result, gy);
   }
 
-  static ImageShapeV2 applySharpeningFilter(ImageShapeV2 shape) {
+  static ImageShape applySharpeningFilter(ImageShape shape) {
     final mask = [
       [0.0, -1.0, 0.0],
       [-1.0, 5.0, -1.0],
@@ -355,7 +355,7 @@ class ImageProcessor {
     return applyConvolution(shape, mask);
   }
 
-  static ImageShapeV2 applyGaussianBlur(ImageShapeV2 shape) {
+  static ImageShape applyGaussianBlur(ImageShape shape) {
     final mask = [
       [1 / 16, 2 / 16, 1 / 16],
       [2 / 16, 4 / 16, 2 / 16],
@@ -364,12 +364,12 @@ class ImageProcessor {
     return applyConvolution(shape, mask);
   }
 
-  static ImageShapeV2 applyCustomFilter(
-      ImageShapeV2 shape, List<List<double>> mask) {
+  static ImageShape applyCustomFilter(
+      ImageShape shape, List<List<double>> mask) {
     return applyConvolution(shape, mask);
   }
 
-  static ImageShapeV2 simpleThreshold(ImageShapeV2 imageShape, int threshold) {
+  static ImageShape simpleThreshold(ImageShape imageShape, int threshold) {
     final pixels = imageShape.pixels.map((pixel) {
       final intensity = pixel.color.red;
       final newColor = intensity >= threshold
@@ -378,7 +378,7 @@ class ImageProcessor {
       return Pixel(pixel.position, newColor);
     }).toList();
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -389,8 +389,8 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 percentBlackSelection(
-      ImageShapeV2 imageShape, double percentage) {
+  static ImageShape percentBlackSelection(
+      ImageShape imageShape, double percentage) {
     final pixels = imageShape.pixels;
     final sortedIntensities = pixels.map((pixel) => pixel.color.red).toList()
       ..sort();
@@ -401,7 +401,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, threshold);
   }
 
-  static ImageShapeV2 meanIterativeSelection(ImageShapeV2 imageShape) {
+  static ImageShape meanIterativeSelection(ImageShape imageShape) {
     final pixels = imageShape.pixels;
     double tPrev, tCurrent = 128.0;
 
@@ -428,7 +428,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, tCurrent.toInt());
   }
 
-  static ImageShapeV2 entropySelection(ImageShapeV2 imageShape) {
+  static ImageShape entropySelection(ImageShape imageShape) {
     final hist = List<int>.filled(256, 0);
     log("Tworzenie histogramu...");
 
@@ -471,7 +471,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, bestThreshold);
   }
 
-  static ImageShapeV2 minimumErrorThreshold(ImageShapeV2 imageShape) {
+  static ImageShape minimumErrorThreshold(ImageShape imageShape) {
     final pixels = imageShape.pixels.map((pixel) => pixel.color.red).toList();
     final hist = List<int>.filled(256, 0);
 
@@ -529,7 +529,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, bestThreshold);
   }
 
-  static ImageShapeV2 fuzzyMinimumErrorThreshold(ImageShapeV2 imageShape) {
+  static ImageShape fuzzyMinimumErrorThreshold(ImageShape imageShape) {
     final pixels = imageShape.pixels.map((pixel) => pixel.color.red).toList();
     final hist = List<int>.filled(256, 0);
 
@@ -573,7 +573,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, bestThreshold);
   }
 
-  static ImageShapeV2 dilate(ImageShapeV2 imageShape, int maskSize) {
+  static ImageShape dilate(ImageShape imageShape, int maskSize) {
     final pixels = imageShape.pixels;
     final offset = maskSize ~/ 2;
     final width = imageShape.endPosition.dx.toInt();
@@ -600,7 +600,7 @@ class ImageProcessor {
       }
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -611,7 +611,7 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 erode(ImageShapeV2 imageShape, int maskSize) {
+  static ImageShape erode(ImageShape imageShape, int maskSize) {
     final pixels = imageShape.pixels;
     final offset = maskSize ~/ 2;
     final width = imageShape.endPosition.dx.toInt();
@@ -643,7 +643,7 @@ class ImageProcessor {
       }
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -654,15 +654,15 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 opening(ImageShapeV2 imageShape, int maskSize) {
+  static ImageShape opening(ImageShape imageShape, int maskSize) {
     return dilate(erode(imageShape, maskSize), maskSize);
   }
 
-  static ImageShapeV2 closing(ImageShapeV2 imageShape, int maskSize) {
+  static ImageShape closing(ImageShape imageShape, int maskSize) {
     return erode(dilate(imageShape, maskSize), maskSize);
   }
 
-  static ImageShapeV2 hitOrMiss(ImageShapeV2 imageShape, List<List<int>> kernel) {
+  static ImageShape hitOrMiss(ImageShape imageShape, List<List<int>> kernel) {
     final offset = kernel.length ~/ 2;
     final pixels = imageShape.pixels;
     final width = imageShape.endPosition.dx.toInt();
@@ -701,7 +701,7 @@ class ImageProcessor {
       }
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -712,7 +712,7 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 otsuThreshold(ImageShapeV2 imageShape) {
+  static ImageShape otsuThreshold(ImageShape imageShape) {
     final hist = List<int>.filled(256, 0);
 
     for (final pixel in imageShape.pixels) {
@@ -749,7 +749,7 @@ class ImageProcessor {
     return simpleThreshold(imageShape, bestThreshold);
   }
 
-  static ImageShapeV2 niblackThreshold(ImageShapeV2 imageShape, double k) {
+  static ImageShape niblackThreshold(ImageShape imageShape, double k) {
     final newPixels = List<Pixel>.from(imageShape.pixels);
 
     for (int i = 0; i < imageShape.pixels.length; i++) {
@@ -766,7 +766,7 @@ class ImageProcessor {
           : Pixel(pixel.position, Colors.white);
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -777,7 +777,7 @@ class ImageProcessor {
     );
   }
 
-  static ImageShapeV2 sauvolaThreshold(ImageShapeV2 imageShape, double k) {
+  static ImageShape sauvolaThreshold(ImageShape imageShape, double k) {
     final newPixels = List<Pixel>.from(imageShape.pixels);
     const r = 128.0;
 
@@ -795,7 +795,7 @@ class ImageProcessor {
           : Pixel(pixel.position, Colors.white);
     }
 
-    return ImageShapeV2(
+    return ImageShape(
       type: imageShape.type,
       startPosition: imageShape.startPosition,
       endPosition: imageShape.endPosition,
@@ -817,7 +817,7 @@ class ImageProcessor {
     return math.sqrt(variance);
   }
 
-  static List<Pixel> _getWindow(ImageShapeV2 imageShape, Offset center) {
+  static List<Pixel> _getWindow(ImageShape imageShape, Offset center) {
     const windowSize = 7;
     const halfSize = windowSize ~/ 2;
 
