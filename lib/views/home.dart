@@ -12,6 +12,8 @@ import 'package:project1/models/bezier_shape.dart';
 import 'package:project1/models/shape.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/viewmodels/shape/shape_cubit.dart';
+import 'package:project1/views/grid_painter.dart';
+import 'package:project1/views/image_painter.dart';
 import 'package:project1/views/painter.dart';
 import 'package:project1/widgets/appbar_widget.dart';
 import 'package:project1/widgets/colors_picker_widget.dart';
@@ -179,14 +181,31 @@ class _HomePageState extends State<_HomePage> {
                 Expanded(
                   child: Stack(
                     children: [
-                      RepaintBoundary(
-                        key: globalKey,
-                        child: CustomPaint(
-                          painter:
-                              BoardPainter(state.shapes, state.currentShape),
-                          child: Container(),
-                        ),
-                      ),
+                      ValueListenableBuilder(
+                          valueListenable: MyApp.backgroundImage,
+                          builder: (context, value, child) {
+                            return CustomPaint(
+                              painter:
+                                  value != null ? ImagePainter(value) : null,
+                              child: ValueListenableBuilder<bool>(
+                                valueListenable: MyApp.showGrid,
+                                builder: (context, showGrid, child) {
+                                  return CustomPaint(
+                                    painter:
+                                        showGrid ? BackgroundPainter() : null,
+                                    child: RepaintBoundary(
+                                      key: globalKey,
+                                      child: CustomPaint(
+                                        painter: BoardPainter(
+                                            state.shapes, state.currentShape),
+                                        child: Container(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }),
                     ],
                   ),
                 ),

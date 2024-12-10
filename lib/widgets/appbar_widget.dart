@@ -1,11 +1,15 @@
 // ignore_for_file: unrelated_type_equality_checks
 
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project1/main.dart';
 import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/views/home.dart';
+import 'dart:ui' as ui;
 
 AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
       flexibleSpace: Container(
@@ -48,37 +52,56 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
             child: const Icon(Icons.sunny),
           ),
         ),
-        const Spacer(),
-        Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-          ),
-          child: InkWell(
-            onTap: () {
-              context.read<BoardCubit>().undo();
-            },
-            child: const Icon(Icons.arrow_back_ios_new),
+        const SizedBox(
+          width: 20,
+        ),
+        GestureDetector(
+          onTap: () {
+            MyApp.showGrid.value = !MyApp.showGrid.value;
+          },
+          child: const Icon(
+            Icons.grid_3x3,
+            color: Colors.black,
           ),
         ),
         const SizedBox(
           width: 20,
         ),
-        Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-          ),
-          child: InkWell(
-            onTap: () {
-              context.read<BoardCubit>().redo();
-            },
-            child: const Icon(Icons.arrow_forward_ios),
+        GestureDetector(
+          onTap: () async {
+            final result = await FilePicker.platform.pickFiles(
+              type: FileType.custom,
+              allowedExtensions: ['png'],
+            );
+
+            if (result != null && result.files.single.path != null) {
+              final filePath = result.files.single.path!;
+              final bytes = await File(filePath).readAsBytes();
+
+              final codec = await ui.instantiateImageCodec(bytes);
+              final frame = await codec.getNextFrame();
+              MyApp.backgroundImage.value = frame.image;
+            }
+          },
+          child: const Icon(
+            Icons.image,
+            color: Colors.black,
           ),
         ),
-        InkWell(
+        const SizedBox(
+          width: 20,
+        ),
+        GestureDetector(
+          onTap: () {
+            MyApp.backgroundImage.value = null;
+          },
+          child: const Icon(
+            Icons.clear,
+            color: Colors.black,
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
           onTap: () {
             context.read<BoardCubit>().clear();
             SelectedFilter.percentage.value = "";

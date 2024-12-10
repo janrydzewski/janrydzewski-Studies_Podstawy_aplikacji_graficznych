@@ -24,6 +24,7 @@ class BoardPainter extends CustomPainter {
   }
 
   void _drawShape(Canvas canvas, Shape shape) async {
+    
     if (shape is ImageShape) {
       final double originalWidth = shape.endPosition.dx;
       final double originalHeight = shape.endPosition.dy;

@@ -381,7 +381,6 @@ class BoardCubit extends Cubit<BoardState> {
       emit(state.copyWith(
         shapes: List.from(state.shapes)..add(shape),
         drawingQueue: state.drawingQueue,
-        lastChangedShape: shape,
       ));
       log("Wykonano zadanie: Rysowanie kształtu ${shape.type}");
     } else {
@@ -392,33 +391,13 @@ class BoardCubit extends Cubit<BoardState> {
   void addShape(Shape shape) {
     emit(state.copyWith(
       shapes: List.from(state.shapes)..add(shape),
-      lastChangedShape: shape,
     ));
   }
 
   void removeShape(Shape shape) {
     emit(state.copyWith(
-      lastChangedShape: shape,
       shapes: List.from(state.shapes)..remove(shape),
     ));
   }
 
-  void undo() {
-    if (state.shapes.isNotEmpty) {
-      final removedShape = state.shapes.last;
-      emit(state.copyWith(
-        shapes: List.from(state.shapes)..removeLast(),
-        lastChangedShape: removedShape,
-      ));
-    }
-  }
-
-  void redo() {
-    if (state.lastChangedShape != null) {
-      emit(state.copyWith(
-        shapes: List.from(state.shapes)..add(state.lastChangedShape!),
-        lastChangedShape: state.lastChangedShape,
-      ));
-    }
-  }
 }

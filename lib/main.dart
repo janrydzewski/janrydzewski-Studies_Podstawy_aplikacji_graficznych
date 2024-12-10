@@ -3,6 +3,7 @@ import 'package:project1/viewmodels/color_converter_viewmodel.dart';
 import 'package:project1/views/home.dart';
 import 'package:project1/views/loading.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(
@@ -18,7 +19,9 @@ void main() {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  static ValueNotifier<ui.Image?> backgroundImage = ValueNotifier<ui.Image?>(null);
   static ValueNotifier<bool> isLoaded = ValueNotifier<bool>(false);
+  static ValueNotifier<bool> showGrid = ValueNotifier<bool>(false);
   static ValueNotifier<ThemeData> theme =
       ValueNotifier<ThemeData>(ThemeData.light());
 
