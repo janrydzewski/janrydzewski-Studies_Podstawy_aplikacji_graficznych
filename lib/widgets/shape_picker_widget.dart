@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project1/main.dart';
 import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/models/shape.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
@@ -102,7 +103,9 @@ class _ShapeElement extends StatelessWidget {
         border: Border.all(
             width: 4,
             color: shapeState.shapeType == shapeType
-                ? Colors.black
+                ? MyApp.theme == ThemeData.light()
+                    ? Colors.black
+                    : Colors.white
                 : Colors.transparent),
       ),
       child: IconButton(

@@ -183,8 +183,7 @@ Widget _buildTextField(double value, Function(String) onChanged) {
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
       ),
-      style: const TextStyle(
-          fontSize: 10, color: Colors.black, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
       textAlign: TextAlign.center,
       controller: TextEditingController(text: value.toStringAsFixed(0)),
       onSubmitted: onChanged,

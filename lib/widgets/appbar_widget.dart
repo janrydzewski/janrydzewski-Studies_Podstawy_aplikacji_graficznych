@@ -1,5 +1,8 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project1/main.dart';
 import 'package:project1/models/image_processing_model.dart';
 import 'package:project1/viewmodels/board/board_cubit.dart';
 import 'package:project1/views/home.dart';
@@ -25,6 +28,9 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
         },
       ),
       actions: [
+        const SizedBox(
+          width: 20,
+        ),
         Theme(
           data: ThemeData(
             splashColor: Colors.transparent,
@@ -33,21 +39,67 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
           ),
           child: InkWell(
             onTap: () {
-              context.read<BoardCubit>().clear();
-              SelectedFilter.percentage.value = "";
+              if (MyApp.theme.value == ThemeData.light()) {
+                MyApp.theme.value = ThemeData.dark();
+              } else {
+                MyApp.theme.value = ThemeData.light();
+              }
             },
-            child: const Row(
-              children: [
-                Icon(Icons.close),
-                SizedBox(
-                  width: 5,
+            child: const Icon(Icons.sunny),
+          ),
+        ),
+        const Spacer(),
+        Theme(
+          data: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+          ),
+          child: InkWell(
+            onTap: () {
+              context.read<BoardCubit>().undo();
+            },
+            child: const Icon(Icons.arrow_back_ios_new),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Theme(
+          data: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+          ),
+          child: InkWell(
+            onTap: () {
+              context.read<BoardCubit>().redo();
+            },
+            child: const Icon(Icons.arrow_forward_ios),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            context.read<BoardCubit>().clear();
+            SelectedFilter.percentage.value = "";
+          },
+          child: const Row(
+            children: [
+              Icon(
+                Icons.clear,
+                color: Colors.black,
+              ),
+              SizedBox(
+                width: 5,
+              ),
+              Text(
+                "Clear",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
                 ),
-                Text(
-                  "Clear",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(
@@ -65,15 +117,23 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
               child: Text('P${index + 1}'),
             ),
           ),
-          icon: const Row(
+          icon: Row(
             children: [
-              Icon(Icons.save),
-              SizedBox(
+              Icon(
+                Icons.save,
+                color: MyApp.theme == ThemeMode.light
+                    ? Colors.black
+                    : Colors.black,
+              ),
+              const SizedBox(
                 width: 5,
               ),
-              Text(
+              const Text(
                 "Save",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),

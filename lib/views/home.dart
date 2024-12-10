@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project1/main.dart';
 import 'package:project1/models/bezier_shape.dart';
 
 import 'package:project1/models/shape.dart';
@@ -192,8 +193,12 @@ class _HomePageState extends State<_HomePage> {
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.black),
-                      gradient: const LinearGradient(
-                          colors: [Colors.grey, Colors.white])),
+                      // ignore: unrelated_type_equality_checks
+                      gradient: MyApp.theme == ThemeData.light()
+                          ? const LinearGradient(
+                              colors: [Colors.grey, Colors.white])
+                          : const LinearGradient(
+                              colors: [Colors.black54, Colors.black12])),
                   width: 250,
                   height: double.infinity,
                   child: const Column(
