@@ -17,7 +17,7 @@ class ColorsPickerWidget extends StatelessWidget {
           children: [
             Container(
               width: 250,
-              height: 150,
+              height: 100,
               color: state.color,
             ),
             Wrap(
@@ -178,15 +178,19 @@ class _ColorElement extends StatelessWidget {
 
 Widget _buildTextField(double value, Function(String) onChanged) {
   return Expanded(
-    child: TextField(
-      keyboardType: TextInputType.number,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
+    child: SizedBox(
+      height: 30,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.zero,
+          border: OutlineInputBorder(),
+        ),
+        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
+        controller: TextEditingController(text: value.toStringAsFixed(0)),
+        onSubmitted: onChanged,
       ),
-      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-      textAlign: TextAlign.center,
-      controller: TextEditingController(text: value.toStringAsFixed(0)),
-      onSubmitted: onChanged,
     ),
   );
 }
