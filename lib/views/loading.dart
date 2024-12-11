@@ -20,7 +20,7 @@ class LandingPage extends StatelessWidget {
               height: 50,
             ),
             const Text(
-              "Świetna aplikacja na grafike komputerową",
+              "Świetna aplikacja na grafikę komputerową",
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 50),
             ),
           ],

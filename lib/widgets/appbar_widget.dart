@@ -13,6 +13,9 @@ import 'dart:ui' as ui;
 
 AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
       flexibleSpace: Container(
+        width: double.infinity,
+        height: 50,
+        alignment: Alignment.center,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -20,16 +23,15 @@ AppBar appBar(Function(String val) func, BuildContext context) => AppBar(
             colors: [Colors.blue, Colors.green],
           ),
         ),
-      ),
-      centerTitle: true,
-      title: ValueListenableBuilder<String>(
-        valueListenable: SelectedFilter.percentage,
-        builder: (context, value, child) {
-          return Text(
-            value != "" ? "Color percentage: $value" : "",
-            style: const TextStyle(fontSize: 24),
-          );
-        },
+        child: ValueListenableBuilder<String>(
+          valueListenable: SelectedFilter.percentage,
+          builder: (context, value, child) {
+            return Text(
+              value != "" ? "Color percentage: $value%" : "",
+              style: const TextStyle(fontSize: 24),
+            );
+          },
+        ),
       ),
       actions: [
         const SizedBox(
